@@ -11,6 +11,8 @@ require 'configatron/proc'
 require 'configatron/delayed'
 require 'configatron/dynamic'
 
+require 'etcd'
+
 class Configatron
 end
 

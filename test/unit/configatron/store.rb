@@ -122,6 +122,23 @@ class Critic::Unit::StoreTest < Critic::Unit::Test
       end
     end
 
+    describe "configure_from_etcd" do
+      before do
+        @etcd_client = Etcd.client
+
+        @etcd_client.set("/configatron/one", value: 1)
+        @etcd_client.set("/configatron/two/three", value: 4)
+        @etcd_client.set("/configatron/a/b/c/d", value: "DD")
+      end
+
+      it "allows setup from etcd" do
+        @store.configure_from_etcd(@etcd_client, "/configatron")
+        assert_equal(1.to_s, @store.one)
+        assert_equal(4.to_s, @store.two.three)
+        assert_equal("DD", @store.a.b.c.d)
+      end
+    end
+
     describe "with a block" do
       before do
         @store.a.b = 'B'

@@ -86,6 +86,20 @@ class Configatron
       @attributes.key?(key.to_sym)
     end
 
+    def configure_from_etcd(etcd_client, namespace)
+      response = etcd_client.get(namespace)
+
+      response.children.each do |child|
+        key = child.key.split("/")[-1]
+
+        if child.directory?
+          self[key].configure_from_etcd(etcd_client, child.key)
+        else
+          store(key, child.value)
+        end
+      end
+    end
+
     def configure_from_hash(hash)
       hash.each do |key, value|
         if ::Hash === value
